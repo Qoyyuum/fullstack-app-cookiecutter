@@ -43,7 +43,7 @@ This template adheres to the twelve-factor methodology:
 
 ```bash
 # Create a new project
-cookiecutter gh:yourusername/fullstack-app-template
+cookiecutter gh:qoyyuum/fullstack-app-cookiecutter
 
 # Answer the prompts to customize your project
 ```
