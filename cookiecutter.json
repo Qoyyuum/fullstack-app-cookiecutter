@@ -20,7 +20,23 @@
             "default_branch": "main"
         }
     },
-    "environment": ["base", "local", "production"],
+    "environments": {
+        "__select__": "Configure environments (all three will be set up)",
+        "standard": {
+            "name": "Standard 12-factor environments",
+            "setup_base": true,
+            "setup_local": true,
+            "setup_production": true,
+            "use_dotenv": true,
+            "separate_configs": true
+        },
+        "custom": {
+            "name": "Custom environment setup",
+            "environments_list": ["base", "local", "production", "staging", "testing"],
+            "use_dotenv": true,
+            "separate_configs": true
+        }
+    },
     "architecture_type": ["monolithic", "separate"],
     "tech_choice": {
         "__select__": "Choose your tech stack",
