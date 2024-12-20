@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite3
+*.db
+
+{% if cookiecutter.database == "PostgreSQL" %}
+# PostgreSQL
+*.psql
+{% endif %}
+
+{% if cookiecutter.database == "MongoDB" %}
+# MongoDB
+*.mongodb
+{% endif %}
+
+{% if cookiecutter.database == "MySQL" %}
+# MySQL
+*.mysql
+{% endif %}

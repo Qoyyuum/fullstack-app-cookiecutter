@@ -1,0 +1,251 @@
+{
+    "project_name": "My Fullstack App",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+    "project_description": "A modern fullstack application",
+    "author_name": "Your Name",
+    "author_email": "your.email@example.com",
+    "version": "0.1.0",
+    "git_organization": "your-org",
+    "repository_setup": {
+        "__select__": "Choose repository setup",
+        "monorepo": {
+            "name": "Monorepo with submodules",
+            "frontend_repo": "{{ cookiecutter.project_slug }}-frontend",
+            "backend_repo": "{{ cookiecutter.project_slug }}-backend",
+            "create_submodules": "y",
+            "default_branch": "main"
+        },
+        "monolithic": {
+            "name": "Single repository",
+            "default_branch": "main"
+        }
+    },
+    "environment": ["base", "local", "production"],
+    "architecture_type": ["monolithic", "separate"],
+    "tech_choice": {
+        "__select__": "Choose your tech stack",
+        "monolithic": {
+            "__select__": "Choose your full-stack framework",
+            "nextjs": "NextJS - React-based full-stack framework",
+            "nuxtjs": "NuxtJS - Vue-based full-stack framework",
+            "quasar": "Quasar Framework - Vue-based full-stack framework",
+            "django": {
+                "__select__": "Django - Python-based full-stack framework",
+                "use_cookiecutter_django": "y",
+                "django_options": {
+                    "project_name": "{{ cookiecutter.project_name }}",
+                    "use_celery": "y",
+                    "use_mailpit": "y",
+                    "use_sentry": "y",
+                    "use_whitenoise": "y",
+                    "cloud_provider": "AWS",
+                    "mail_service": "Mailgun"
+                }
+            },
+            "laravel": "Laravel - PHP-based full-stack framework",
+            "flutter": "Flutter - Dart-based cross-platform framework"
+        },
+        "separate": {
+            "frontend": {
+                "__select__": "Choose your frontend framework",
+                "vanilla": "Vanilla NodeJS",
+                "deno": "Deno",
+                "hono": "HonoJS with Drizzle ORM",
+                "react": "React",
+                "react_native": "React Native",
+                "vue": "VueJS",
+                "quasar": "Quasar Framework",
+                "flutter": "Flutter"
+            },
+            "backend": {
+                "__select__": "Choose your backend framework",
+                "django": {
+                    "__select__": "Django - Python",
+                    "use_cookiecutter_django": "y",
+                    "django_options": {
+                        "project_name": "{{ cookiecutter.project_name }}",
+                        "use_celery": "y",
+                        "use_mailpit": "y",
+                        "use_sentry": "y",
+                        "use_whitenoise": "y",
+                        "cloud_provider": "AWS",
+                        "mail_service": "Mailgun"
+                    }
+                },
+                "laravel": "Laravel - PHP",
+                "nuxtjs": "NuxtJS - Vue/Node.js",
+                "nextjs": "NextJS - React/Node.js",
+                "quasar_ssr": "Quasar Framework SSR"
+            }
+        }
+    },
+    "deployment": {
+        "__select__": "Choose your deployment configuration",
+        "monolithic": {
+            "__select__": "Choose deployment platform for monolithic app",
+            "aws": "Amazon Web Services (ECS/EKS)",
+            "gcp": "Google Cloud Platform (GKE)",
+            "azure": "Microsoft Azure (AKS)",
+            "digitalocean": "DigitalOcean Kubernetes/Apps",
+            "hetzner": "Hetzner Cloud (VPS/Kubernetes)"
+        },
+        "separate": {
+            "frontend": {
+                "__select__": "Choose frontend deployment platform",
+                "vercel": {
+                    "name": "Vercel",
+                    "compatible_with": ["react", "vue", "nextjs", "nuxtjs"]
+                },
+                "netlify": {
+                    "name": "Netlify",
+                    "compatible_with": ["react", "vue", "nextjs", "nuxtjs"]
+                },
+                "cloudflare": {
+                    "name": "Cloudflare Pages",
+                    "compatible_with": ["react", "vue", "nextjs", "nuxtjs"]
+                },
+                "aws": {
+                    "name": "AWS (S3 + CloudFront)",
+                    "compatible_with": ["react", "vue", "vanilla"]
+                },
+                "gcp": {
+                    "name": "GCP (Cloud Storage + CDN)",
+                    "compatible_with": ["react", "vue", "vanilla"]
+                },
+                "azure": {
+                    "name": "Azure (Static Web Apps)",
+                    "compatible_with": ["react", "vue", "vanilla"]
+                }
+            },
+            "backend": {
+                "__select__": "Choose backend deployment platform",
+                "aws": {
+                    "name": "AWS (ECS/EKS)",
+                    "compatible_with": ["django", "laravel", "nextjs", "nuxtjs", "quasar_ssr"]
+                },
+                "gcp": {
+                    "name": "GCP (Cloud Run/GKE)",
+                    "compatible_with": ["django", "laravel", "nextjs", "nuxtjs", "quasar_ssr"]
+                },
+                "azure": {
+                    "name": "Azure (App Service/AKS)",
+                    "compatible_with": ["django", "laravel", "nextjs", "nuxtjs", "quasar_ssr"]
+                },
+                "digitalocean": {
+                    "name": "DigitalOcean (Apps/Kubernetes)",
+                    "compatible_with": ["django", "laravel", "nextjs", "nuxtjs", "quasar_ssr"]
+                },
+                "hetzner": {
+                    "name": "Hetzner (VPS/Kubernetes)",
+                    "compatible_with": ["django", "laravel", "nextjs", "nuxtjs", "quasar_ssr"]
+                }
+            }
+        }
+    },
+    "infrastructure_as_code": {
+        "__select__": "Choose your IaC tool",
+        "opentofu": {
+            "name": "OpenTofu",
+            "generate_separate_states": "y",
+            "state_backend": ["local", "s3", "gcs", "azurerm"]
+        },
+        "terraform": {
+            "name": "Terraform",
+            "generate_separate_states": "y",
+            "state_backend": ["local", "s3", "gcs", "azurerm"]
+        },
+        "pulumi": {
+            "name": "Pulumi",
+            "language": ["typescript", "python", "go"],
+            "generate_separate_states": "y",
+            "state_backend": ["local", "s3", "gcs", "azurerm"]
+        }
+    },
+    "database": {
+        "__select__": "Choose your database provider",
+        "supabase": "Supabase - PostgreSQL with superpowers",
+        "neon": "Neon - Serverless PostgreSQL",
+        "planetscale": "PlanetScale - Serverless MySQL"
+    },
+    "authentication": {
+        "__select__": "Choose your authentication provider",
+        "supabase_auth": {
+            "name": "Supabase Auth",
+            "features": ["OAuth", "Email/Password", "Magic Link", "Phone Auth"],
+            "include_examples": "y"
+        },
+        "clerk": {
+            "name": "Clerk - Full user management",
+            "features": ["OAuth", "Email/Password", "MFA", "User Profiles"],
+            "include_examples": "y"
+        },
+        "twilio": {
+            "name": "Twilio Verify & Authy",
+            "features": ["SMS Auth", "WhatsApp Auth", "Voice Auth", "TOTP"],
+            "include_examples": "y"
+        },
+        "keycloak": {
+            "name": "Keycloak - Open Source IAM",
+            "features": ["OAuth", "SAML", "Identity Brokering"],
+            "include_examples": "y"
+        }
+    },
+    "api_security": {
+        "__select__": "Choose API security method",
+        "jwt": {
+            "name": "JWT with refresh tokens",
+            "secret_key": "{{ random_ascii_string(64) }}",
+            "refresh_secret_key": "{{ random_ascii_string(64) }}",
+            "token_expiry": "1h",
+            "refresh_token_expiry": "7d"
+        },
+        "api_key": {
+            "name": "API Key authentication",
+            "key_rotation_period": "30d",
+            "rate_limiting": true
+        },
+        "oauth2": {
+            "name": "OAuth2 with PKCE",
+            "providers": ["github", "google", "microsoft"],
+            "use_state_param": true,
+            "pkce_required": true
+        }
+    },
+    "use_docker": "y",
+    "include_ci": "y",
+    "deployment_platform": {
+        "__select__": "Choose your cloud provider",
+        "aws": "Amazon Web Services",
+        "gcp": "Google Cloud Platform",
+        "azure": "Microsoft Azure",
+        "vercel": "Vercel",
+        "netlify": "Netlify",
+        "digitalocean": "DigitalOcean",
+        "cloudflare": "Cloudflare Pages"
+    },
+    "domain_management": {
+        "use_cloudflare": "y",
+        "domain_type": ["apex_domain", "subdomain"],
+        "custom_domain": "example.com"
+    },
+    "include_testing": "y",
+    "include_business_plan": "y",
+    "include_pitch_deck": "y",
+    "license": ["MIT", "Apache-2.0", "GPL-3.0"],
+    "hono_addons": {
+        "__select__": "Choose HonoJS addons (if HonoJS is selected)",
+        "drizzle": "Drizzle ORM for database",
+        "prisma": "Prisma ORM for database",
+        "jwt": "JWT authentication",
+        "swagger": "OpenAPI/Swagger documentation",
+        "zod": "Zod for validation"
+    },
+    "quasar_addons": {
+        "__select__": "Choose Quasar addons (if Quasar is selected)",
+        "capacitor": "Capacitor for mobile",
+        "electron": "Electron for desktop",
+        "pwa": "Progressive Web App support",
+        "ssr": "Server Side Rendering",
+        "bex": "Browser Extension"
+    }
+}

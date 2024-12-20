@@ -1,0 +1,278 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  {% if cookiecutter.architecture_type == "separate" %}
+  frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: {% if cookiecutter.repository_setup == "monorepo" %}true{% else %}false{% endif %}
+
+      {% if cookiecutter.tech_choice.separate.frontend in ["react", "vue", "hono"] %}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+      {% endif %}
+
+      {% if cookiecutter.tech_choice.separate.frontend == "flutter" %}
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+      {% endif %}
+
+      {% if cookiecutter.tech_choice.separate.frontend == "quasar" %}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          npm install -g @quasar/cli
+          npm ci
+
+      - name: Run tests
+        run: quasar test --unit jest
+      {% endif %}
+
+  backend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      {% if cookiecutter.tech_choice.separate.backend in ["laravel", "django"] %}
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      {% endif %}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: {% if cookiecutter.repository_setup == "monorepo" %}true{% else %}false{% endif %}
+
+      {% if cookiecutter.tech_choice.separate.backend == "laravel" %}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_pgsql, dom, filter, gd, json, libxml
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+      {% endif %}
+
+      {% if cookiecutter.tech_choice.separate.backend in ["nextjs", "nuxtjs", "quasar_ssr"] %}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+      {% endif %}
+
+      {% if cookiecutter.api_security == "jwt" %}
+      - name: Test JWT security
+        run: |
+          {% if cookiecutter.tech_choice.separate.backend == "laravel" %}
+          php artisan test --filter=JWTAuthTest
+          {% else %}
+          npm run test:security
+          {% endif %}
+      {% endif %}
+
+      {% if cookiecutter.api_security == "api_key" %}
+      - name: Test API Key security
+        run: |
+          {% if cookiecutter.tech_choice.separate.backend == "laravel" %}
+          php artisan test --filter=ApiKeyAuthTest
+          {% else %}
+          npm run test:security
+          {% endif %}
+      {% endif %}
+
+      {% if cookiecutter.api_security == "oauth2" %}
+      - name: Test OAuth2 security
+        env:
+          OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+        run: |
+          {% if cookiecutter.tech_choice.separate.backend == "laravel" %}
+          php artisan test --filter=OAuth2Test
+          {% else %}
+          npm run test:security
+          {% endif %}
+      {% endif %}
+
+  {% else %}
+  monolithic-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      {% if cookiecutter.tech_choice.monolithic in ["laravel", "django"] %}
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      {% endif %}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      {% if cookiecutter.tech_choice.monolithic == "laravel" %}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_pgsql, dom, filter, gd, json, libxml
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+      {% endif %}
+
+      {% if cookiecutter.tech_choice.monolithic in ["nextjs", "nuxtjs", "quasar"] %}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+      {% endif %}
+
+      {% if cookiecutter.tech_choice.monolithic == "flutter" %}
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+      {% endif %}
+
+      {% if cookiecutter.api_security == "jwt" %}
+      - name: Test JWT security
+        run: |
+          {% if cookiecutter.tech_choice.monolithic == "laravel" %}
+          php artisan test --filter=JWTAuthTest
+          {% else %}
+          npm run test:security
+          {% endif %}
+      {% endif %}
+
+      {% if cookiecutter.api_security == "api_key" %}
+      - name: Test API Key security
+        run: |
+          {% if cookiecutter.tech_choice.monolithic == "laravel" %}
+          php artisan test --filter=ApiKeyAuthTest
+          {% else %}
+          npm run test:security
+          {% endif %}
+      {% endif %}
+
+      {% if cookiecutter.api_security == "oauth2" %}
+      - name: Test OAuth2 security
+        env:
+          OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+        run: |
+          {% if cookiecutter.tech_choice.monolithic == "laravel" %}
+          php artisan test --filter=OAuth2Test
+          {% else %}
+          npm run test:security
+          {% endif %}
+      {% endif %}
+  {% endif %}
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: {% if cookiecutter.repository_setup == "monorepo" %}true{% else %}false{% endif %}
+
+      - name: Run SAST scan
+        uses: github/codeql-action/init@v2
+        with:
+          languages: {% if cookiecutter.tech_choice.separate.backend == "laravel" %}['php']{% else %}['javascript']{% endif %}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Run dependency vulnerability scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    {% if cookiecutter.tech_stack_backend != "None" %}depends_on:
+      - backend{% endif %}
+
+  {% if cookiecutter.tech_stack_backend != "None" %}backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db{% endif %}
+
+  {% if cookiecutter.database == "PostgreSQL" %}db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB={{ cookiecutter.project_slug }}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data{% endif %}
+  
+  {% if cookiecutter.database == "MongoDB" %}db:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE={{ cookiecutter.project_slug }}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db{% endif %}
+
+  {% if cookiecutter.database == "MySQL" %}db:
+    image: mysql:8
+    environment:
+      - MYSQL_DATABASE={{ cookiecutter.project_slug }}
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql{% endif %}
+
+volumes:
+  {% if cookiecutter.database == "PostgreSQL" %}postgres_data:{% endif %}
+  {% if cookiecutter.database == "MongoDB" %}mongodb_data:{% endif %}
+  {% if cookiecutter.database == "MySQL" %}mysql_data:{% endif %}
