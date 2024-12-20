@@ -214,31 +214,27 @@
     "use_docker": "y",
     "include_ci": "y",
     "deployment_platform": {
-        "__select__": "Choose your cloud provider",
-        "aws": "Amazon Web Services",
-        "gcp": "Google Cloud Platform",
-        "azure": "Microsoft Azure",
-        "vercel": "Vercel",
-        "netlify": "Netlify",
-        "digitalocean": "DigitalOcean",
-        "cloudflare": "Cloudflare Pages"
+        "__select__": "Choose your deployment platform",
+        "kubernetes": "Deploy using Kubernetes",
+        "serverless": "Deploy using Serverless",
+        "vm": "Deploy using Virtual Machines"
     },
     "domain_management": {
-        "use_cloudflare": "y",
-        "domain_type": ["apex_domain", "subdomain"],
-        "custom_domain": "example.com"
+        "__select__": "Choose domain management solution",
+        "cloudflare": "Cloudflare DNS and CDN",
+        "route53": "AWS Route 53",
+        "azure_dns": "Azure DNS",
+        "cloud_dns": "Google Cloud DNS"
     },
     "include_testing": "y",
     "include_business_plan": "y",
     "include_pitch_deck": "y",
     "license": ["MIT", "Apache-2.0", "GPL-3.0"],
     "hono_addons": {
-        "__select__": "Choose HonoJS addons (if HonoJS is selected)",
-        "drizzle": "Drizzle ORM for database",
-        "prisma": "Prisma ORM for database",
-        "jwt": "JWT authentication",
-        "swagger": "OpenAPI/Swagger documentation",
-        "zod": "Zod for validation"
+        "__select__": "Choose Hono.js addons",
+        "basic": "Basic setup with no addons",
+        "full": "Full setup with all addons",
+        "custom": "Custom addon selection"
     },
     "quasar_addons": {
         "__select__": "Choose Quasar addons (if Quasar is selected)",
