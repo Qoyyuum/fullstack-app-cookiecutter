@@ -6,17 +6,15 @@
     "author_email": "your.email@example.com",
     "version": "0.1.0",
     "git_organization": "your-org",
-    "repository_setup": {
-        "__select__": "Choose repository setup",
-        "monorepo": {
-            "name": "Monorepo with submodules",
+    "repository_type": ["monolithic", "monorepo"],
+    "use_git_submodules": {
+        "__select__": "Do you want to use Git submodules?",
+        "y": {
             "frontend_repo": "{{ cookiecutter.project_slug }}-frontend",
             "backend_repo": "{{ cookiecutter.project_slug }}-backend",
-            "create_submodules": "y",
             "default_branch": "main"
         },
-        "monolithic": {
-            "name": "Single repository",
+        "n": {
             "default_branch": "main"
         }
     },
