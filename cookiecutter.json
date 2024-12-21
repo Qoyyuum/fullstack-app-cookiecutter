@@ -8,7 +8,6 @@
     "git_organization": "your-org",
     "repository_type": ["monolithic", "monorepo"],
     "use_git_submodules": {
-        "__select__": "Do you want to use Git submodules?",
         "y": {
             "frontend_repo": "{{ cookiecutter.project_slug }}-frontend",
             "backend_repo": "{{ cookiecutter.project_slug }}-backend",
@@ -19,7 +18,6 @@
         }
     },
     "environments": {
-        "__select__": "Configure environments (all three will be set up)",
         "standard": {
             "name": "Standard 12-factor environments",
             "setup_base": true,
